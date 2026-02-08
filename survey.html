@@ -467,80 +467,6 @@ body {
   font-style: italic;
 }
 
-/* AI Visual Section */
-.ai-visual-section { margin-bottom: 2rem; }
-.ai-visual-section h3 {
-  font-family: var(--font-heading);
-  font-size: var(--fs-h3);
-  margin-bottom: 0.5rem;
-}
-.ai-visual-section > p {
-  color: var(--color-slate-light);
-  font-size: var(--fs-small);
-  margin-bottom: 1.25rem;
-}
-.generate-btn {
-  background: var(--color-charcoal);
-  color: var(--color-ivory);
-  padding: 0.85rem 2rem;
-  border-radius: 0.25rem;
-  border: none;
-  font-family: var(--font-body);
-  font-size: var(--fs-small);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-base), transform var(--transition-base);
-}
-.generate-btn:hover {
-  background: var(--color-charcoal-light);
-  transform: translateY(-1px);
-}
-.generate-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-.ai-loading {
-  display: none;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-  font-size: var(--fs-small);
-  color: var(--color-slate);
-}
-.ai-loading.show { display: flex; }
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid var(--color-border);
-  border-top-color: var(--color-amber);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.ai-result {
-  margin-top: 1.5rem;
-  display: none;
-}
-.ai-result.show { display: block; }
-.ai-result img {
-  width: 100%;
-  max-width: 700px;
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-}
-.ai-error {
-  display: none;
-  margin-top: 1rem;
-  padding: 1rem;
-  background: rgba(224, 85, 85, 0.08);
-  border: 1px solid rgba(224, 85, 85, 0.2);
-  border-radius: 0.25rem;
-  color: var(--color-red);
-  font-size: var(--fs-small);
-}
-.ai-error.show { display: block; }
-
 /* ── Footer ── */
 .footer {
   background: var(--color-charcoal);
@@ -697,21 +623,6 @@ body {
         <div class="distribution-grid" id="distribution-grid"></div>
       </div>
 
-      <!-- AI Visualization -->
-      <div class="ai-visual-section">
-        <h3>AI-Generated Feedback Visualisation</h3>
-        <p>Generate a unique visual summary of your client feedback data using AI image generation.</p>
-        <button class="generate-btn" id="generate-btn">Generate Visualisation</button>
-        <div class="ai-loading" id="ai-loading">
-          <div class="spinner"></div>
-          <span>Generating image with DALL-E &mdash; this may take a few seconds&hellip;</span>
-        </div>
-        <div class="ai-error" id="ai-error"></div>
-        <div class="ai-result" id="ai-result">
-          <img id="ai-image" src="" alt="AI-generated visualisation of NPS feedback data">
-        </div>
-      </div>
-
       <!-- Individual Responses -->
       <div class="responses-section">
         <h3>Individual Responses</h3>
@@ -734,7 +645,6 @@ body {
   'use strict';
 
   var STORAGE_KEY = 'athena_nps_responses';
-  var OPENAI_API_KEY = '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';
 
   // ── Helpers ──
   function getResponses() {
@@ -944,79 +854,6 @@ body {
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
   }
-
-  // ── DALL-E Image Generation ──
-  var generateBtn = document.getElementById('generate-btn');
-  var aiLoading = document.getElementById('ai-loading');
-  var aiError = document.getElementById('ai-error');
-  var aiResult = document.getElementById('ai-result');
-  var aiImage = document.getElementById('ai-image');
-
-  generateBtn.addEventListener('click', function() {
-    var responses = getResponses();
-    if (!responses.length) return;
-
-    var stats = calcNPS(responses);
-    var totalResponses = responses.length;
-
-    // Build descriptive prompt from the data
-    var npsLabel = stats.nps >= 50 ? 'excellent' : stats.nps >= 0 ? 'good' : 'needs improvement';
-
-    var prompt = 'Create a clean, modern, professional infographic-style data visualisation for a consulting firm called Athena. '
-      + 'The image should present Net Promoter Score (NPS) survey results with the following data: '
-      + 'Overall NPS score: ' + stats.nps + ' (' + npsLabel + '). '
-      + 'Total responses: ' + totalResponses + '. '
-      + 'Promoters (score 9-10): ' + stats.prPct + '% (' + stats.promoters + ' responses). '
-      + 'Passives (score 7-8): ' + stats.paPct + '% (' + stats.passives + ' responses). '
-      + 'Detractors (score 0-6): ' + stats.dPct + '% (' + stats.detractors + ' responses). '
-      + 'Use a warm, premium colour palette with dark charcoal (#1A1D23) background, ivory (#FAF9F0) text, '
-      + 'and amber/gold (#C8943F) accents. Use green for promoters, amber/yellow for passives, and red for detractors. '
-      + 'Include visual elements like a gauge, bar segments, and clear typography. '
-      + 'The style should feel editorial, sophisticated, and data-driven — suitable for a strategy advisory firm. '
-      + 'No photographs, purely graphic and typographic.';
-
-    // Show loading, hide previous results
-    generateBtn.disabled = true;
-    aiLoading.classList.add('show');
-    aiError.classList.remove('show');
-    aiResult.classList.remove('show');
-
-    fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + OPENAI_API_KEY
-      },
-      body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: prompt,
-        n: 1,
-        size: '1792x1024',
-        quality: 'standard'
-      })
-    })
-    .then(function(res) {
-      if (!res.ok) {
-        return res.json().then(function(err) {
-          throw new Error(err.error ? err.error.message : 'API request failed (' + res.status + ')');
-        });
-      }
-      return res.json();
-    })
-    .then(function(data) {
-      var imageUrl = data.data[0].url;
-      aiImage.src = imageUrl;
-      aiResult.classList.add('show');
-    })
-    .catch(function(err) {
-      aiError.textContent = 'Error: ' + err.message;
-      aiError.classList.add('show');
-    })
-    .finally(function() {
-      generateBtn.disabled = false;
-      aiLoading.classList.remove('show');
-    });
-  });
 
 })();
 </script>
