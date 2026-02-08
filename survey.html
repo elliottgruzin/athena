@@ -499,6 +499,43 @@ body {
 </head>
 <body>
 
+<!-- Password Gate -->
+<div id="password-gate" style="position:fixed;inset:0;z-index:99999;background:#1A1D23;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;width:min(360px,90%);">
+    <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:#FAF9F0;margin-bottom:0.25rem;">Athena<span style="color:#C8943F;">.</span></div>
+    <p style="color:#8B8F99;font-family:'Inter',sans-serif;font-size:0.9rem;margin-bottom:2rem;">Enter the password to continue</p>
+    <input id="gate-input" type="password" placeholder="Password" autofocus
+      style="width:100%;padding:0.85rem 1rem;border:1px solid rgba(255,255,255,0.15);border-radius:0.25rem;background:rgba(255,255,255,0.06);color:#FAF9F0;font-family:'Inter',sans-serif;font-size:1rem;text-align:center;outline:none;">
+    <p id="gate-error" style="color:#E05555;font-size:0.8rem;margin-top:0.5rem;visibility:hidden;">Incorrect password.</p>
+    <button id="gate-btn" type="button"
+      style="margin-top:0.75rem;width:100%;padding:0.85rem;background:#C8943F;color:#1A1D23;border:none;border-radius:0.25rem;font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">
+      Enter
+    </button>
+  </div>
+</div>
+<script>
+(function(){
+  var PASS = 'athena2026';
+  var KEY = 'athena_auth';
+  var gate = document.getElementById('password-gate');
+  if (sessionStorage.getItem(KEY) === '1') { gate.remove(); return; }
+  var input = document.getElementById('gate-input');
+  var error = document.getElementById('gate-error');
+  function attempt() {
+    if (input.value === PASS) {
+      sessionStorage.setItem(KEY, '1');
+      gate.remove();
+    } else {
+      error.style.visibility = 'visible';
+      input.style.borderColor = '#E05555';
+    }
+  }
+  document.getElementById('gate-btn').addEventListener('click', attempt);
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') attempt(); });
+  input.addEventListener('input', function() { error.style.visibility = 'hidden'; input.style.borderColor = 'rgba(255,255,255,0.15)'; });
+})();
+</script>
+
 <!-- Header -->
 <header class="header">
   <div class="container">
