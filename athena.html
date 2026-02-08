@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Athena — Strategy &amp; Product Advisory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Custom Properties ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --color-ivory: #FAF9F0;
+  --color-charcoal: #1A1D23;
+  --color-charcoal-light: #2A2D35;
+  --color-slate: #4A4E57;
+  --color-slate-light: #8B8F99;
+  --color-amber: #C8943F;
+  --color-amber-dark: #A67A2E;
+  --color-cloud: #EFEFEF;
+  --color-border: #DDDDD8;
+
+  --font-heading: 'DM Serif Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --fs-hero: clamp(2.5rem, 5vw + 1rem, 5rem);
+  --fs-h2: clamp(2rem, 3vw + 0.5rem, 3.5rem);
+  --fs-h3: clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
+  --fs-body: clamp(0.95rem, 0.5vw + 0.75rem, 1.125rem);
+  --fs-small: clamp(0.8rem, 0.4vw + 0.65rem, 0.9rem);
+
+  --container: min(1200px, 90%);
+  --section-py: clamp(4rem, 8vw, 8rem);
+
+  --transition-base: 0.3s ease;
+}
+
+/* ── Theme Switching ── */
+[data-theme="light"] { --bg: var(--color-ivory); --fg: var(--color-charcoal); --fg-secondary: var(--color-slate); --accent: var(--color-amber); }
+[data-theme="cloud"] { --bg: var(--color-cloud); --fg: var(--color-charcoal); --fg-secondary: var(--color-slate); --accent: var(--color-amber); }
+[data-theme="dark"]  { --bg: var(--color-charcoal); --fg: var(--color-ivory); --fg-secondary: var(--color-slate-light); --accent: var(--color-amber); }
+[data-theme="gradient"] { --bg: var(--color-charcoal); --fg: var(--color-ivory); --fg-secondary: var(--color-slate-light); --accent: var(--color-amber); }
+
+::selection { background: var(--color-amber); color: var(--color-ivory); }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--color-charcoal);
+  background: var(--color-ivory);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Skip Link ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background: var(--color-amber);
+  color: var(--color-charcoal);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  z-index: 10000;
+  text-decoration: none;
+}
+.skip-link:focus { top: 1rem; }
+
+/* ── Focus Visible ── */
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 3px;
+}
+
+/* ── Container ── */
+.container { width: var(--container); margin-inline: auto; }
+
+/* ── Section Base ── */
+section {
+  padding-block: var(--section-py);
+  background: var(--bg);
+  color: var(--fg);
+  position: relative;
+  overflow: hidden;
+}
+[data-theme="gradient"] {
+  background: linear-gradient(310deg, var(--color-charcoal) 0%, var(--color-charcoal-light) 50%, #32363F 100%);
+}
+
+/* ── Navigation ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: background var(--transition-base), box-shadow var(--transition-base);
+}
+.nav.scrolled {
+  background: rgba(26, 29, 35, 0.95);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 20px rgba(0,0,0,0.15);
+}
+.nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--color-ivory);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.nav-logo span { color: var(--color-amber); }
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--color-slate-light);
+  text-decoration: none;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  transition: color var(--transition-base);
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--color-amber);
+  transition: width var(--transition-base);
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--color-ivory); }
+.nav-links a.active::after { width: 100%; }
+
+/* Hamburger */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-ivory);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+.nav-toggle span + span { margin-top: 6px; }
+.nav-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 29, 35, 0.97);
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+}
+.mobile-overlay.open { display: flex; }
+.mobile-overlay .nav-links {
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+.mobile-overlay .nav-links a {
+  font-size: 1.25rem;
+  color: var(--color-ivory);
+}
+
+@media (max-width: 900px) {
+  .nav-links-desktop { display: none; }
+  .nav-toggle { display: flex; flex-direction: column; }
+}
+@media (min-width: 901px) {
+  .mobile-overlay { display: none !important; }
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 60%;
+  height: 120%;
+  background: rgba(200, 148, 63, 0.04);
+  clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+.hero-tag {
+  display: inline-block;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--color-amber);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.8s ease both;
+}
+.hero h1 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-hero);
+  line-height: 1.1;
+  color: var(--color-ivory);
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.8s 0.15s ease both;
+}
+.hero p {
+  font-size: clamp(1rem, 0.5vw + 0.9rem, 1.2rem);
+  color: var(--color-slate-light);
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  animation: fadeInUp 0.8s 0.3s ease both;
+}
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.8s 0.45s ease both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  border-radius: 0.25rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base), transform var(--transition-base);
+  border: 2px solid transparent;
+}
+.btn-primary {
+  background: var(--color-amber);
+  color: var(--color-charcoal);
+}
+.btn-primary:hover {
+  background: var(--color-amber-dark);
+  transform: translateY(-1px);
+}
+.btn-outline {
+  background: transparent;
+  border-color: var(--color-slate-light);
+  color: var(--color-ivory);
+}
+.btn-outline:hover {
+  border-color: var(--color-amber);
+  color: var(--color-amber);
+  transform: translateY(-1px);
+}
+
+/* ── Section Headers ── */
+.section-tag {
+  display: inline-block;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--accent, var(--color-amber));
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+}
+
+/* ── About ── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+.about-text p { color: var(--fg-secondary); margin-bottom: 1.25rem; }
+.approach-cards { display: flex; flex-direction: column; gap: 1.5rem; }
+.approach-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 1.75rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.approach-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.approach-icon {
+  width: 44px; height: 44px;
+  background: rgba(200, 148, 63, 0.1);
+  border-radius: 0.5rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--color-amber);
+}
+.approach-card h4 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+.approach-card p {
+  color: var(--color-slate);
+  font-size: var(--fs-small);
+}
+
+@media (max-width: 768px) {
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+/* ── Team ── */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+.team-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+.avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--color-charcoal);
+  color: var(--color-amber);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin: 0 auto 1.25rem;
+}
+.team-card h3 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  margin-bottom: 0.25rem;
+  color: var(--color-charcoal);
+}
+.team-role {
+  color: var(--color-amber);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  margin-bottom: 0.75rem;
+}
+.team-bio {
+  color: var(--color-slate);
+  font-size: var(--fs-small);
+  line-height: 1.6;
+}
+
+/* ── Services ── */
+.services-list {
+  max-width: 800px;
+  margin: 3rem auto 0;
+}
+.service-item {
+  border-left: 3px solid var(--color-amber);
+  margin-bottom: 1rem;
+  background: #fff;
+  border-radius: 0 0.5rem 0.5rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+.service-item summary {
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  user-select: none;
+  transition: color var(--transition-base);
+}
+.service-item summary::-webkit-details-marker { display: none; }
+.service-item summary::after {
+  content: '+';
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--color-amber);
+  transition: transform var(--transition-base);
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+.service-item[open] summary::after {
+  transform: rotate(45deg);
+}
+.service-item summary:hover { color: var(--color-amber); }
+.service-content {
+  padding: 0 1.5rem 1.5rem;
+  overflow: hidden;
+}
+.service-content p {
+  color: var(--color-slate);
+  margin-bottom: 1rem;
+}
+.service-content ul {
+  list-style: none;
+  padding: 0;
+}
+.service-content li {
+  padding: 0.4rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: var(--color-slate);
+  font-size: var(--fs-small);
+}
+.service-content li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.75rem;
+  width: 6px; height: 6px;
+  background: var(--color-amber);
+  border-radius: 50%;
+}
+
+/* ── Client Logos Marquee ── */
+.clients-section { padding-block: var(--section-py); overflow: hidden; }
+.marquee-wrapper {
+  overflow: hidden;
+  position: relative;
+  margin-top: 3rem;
+}
+.marquee-wrapper::before,
+.marquee-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 100px;
+  z-index: 2;
+  pointer-events: none;
+}
+.marquee-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-ivory), transparent);
+}
+.marquee-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-ivory), transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+.marquee-item {
+  flex-shrink: 0;
+  padding: 1rem 3rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  color: var(--color-slate-light);
+  white-space: nowrap;
+  opacity: 0.6;
+  transition: opacity var(--transition-base);
+}
+.marquee-item:hover { opacity: 1; }
+.marquee-divider {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  color: var(--color-border);
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Testimonials ── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+.testimonial-card {
+  background: var(--color-charcoal-light);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  transition: transform var(--transition-base);
+}
+.testimonial-card:hover { transform: translateY(-3px); }
+.quote-mark {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--color-amber);
+  margin-bottom: 0.5rem;
+}
+.testimonial-card blockquote {
+  color: var(--color-slate-light);
+  font-size: var(--fs-body);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+.testimonial-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin-bottom: 1rem;
+}
+.testimonial-author { font-weight: 600; color: var(--color-ivory); font-size: var(--fs-small); }
+.testimonial-title { color: var(--color-slate-light); font-size: var(--fs-small); }
+
+@media (max-width: 768px) {
+  .testimonials-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Contact ── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+.contact-text p { color: var(--fg-secondary); margin-bottom: 1.25rem; }
+.contact-text a { color: var(--color-amber); text-decoration: none; }
+.contact-text a:hover { text-decoration: underline; }
+
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem 1rem 0.75rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 0.25rem;
+  color: var(--color-ivory);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  transition: border-color var(--transition-base);
+}
+.form-group textarea { min-height: 130px; resize: vertical; }
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-amber);
+}
+.form-group label {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-slate-light);
+  font-size: var(--fs-body);
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+.form-group textarea ~ label { top: 1rem; transform: none; }
+.form-group input:focus ~ label,
+.form-group input:not(:placeholder-shown) ~ label {
+  top: 0.35rem;
+  transform: none;
+  font-size: 0.7rem;
+  color: var(--color-amber);
+}
+.form-group textarea:focus ~ label,
+.form-group textarea:not(:placeholder-shown) ~ label {
+  top: -0.6rem;
+  font-size: 0.7rem;
+  color: var(--color-amber);
+  background: var(--color-charcoal);
+  padding: 0 0.35rem;
+}
+.form-error {
+  color: #E57373;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: none;
+}
+.form-group.error input,
+.form-group.error textarea { border-color: #E57373; }
+.form-group.error .form-error { display: block; }
+
+.form-success {
+  text-align: center;
+  padding: 3rem 1rem;
+  display: none;
+}
+.form-success.show { display: block; }
+.form-success h3 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  color: var(--color-ivory);
+  margin-bottom: 0.75rem;
+}
+.form-success p { color: var(--color-slate-light); }
+.success-icon {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: rgba(200, 148, 63, 0.15);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.5rem;
+  color: var(--color-amber);
+}
+
+@media (max-width: 768px) {
+  .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+/* ── Footer ── */
+.footer {
+  background: var(--color-charcoal);
+  color: var(--color-slate-light);
+  padding: 3rem 0 2rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.footer-logo {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  color: var(--color-ivory);
+  margin-bottom: 0.5rem;
+}
+.footer-logo span { color: var(--color-amber); }
+.footer-tagline { font-size: var(--fs-small); color: var(--color-slate-light); }
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.footer-links a {
+  color: var(--color-slate-light);
+  text-decoration: none;
+  font-size: var(--fs-small);
+  transition: color var(--transition-base);
+}
+.footer-links a:hover { color: var(--color-amber); }
+.footer-bottom {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+  font-size: var(--fs-small);
+}
+
+/* ── Reveal on Scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal.delay-1 { transition-delay: 0.1s; }
+.reveal.delay-2 { transition-delay: 0.2s; }
+.reveal.delay-3 { transition-delay: 0.3s; }
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .marquee-track { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Skip Link -->
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- Navigation -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="#home" class="nav-logo">Athena<span>.</span></a>
+    <ul class="nav-links nav-links-desktop">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="survey.html">Feedback</a></li>
+    </ul>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" aria-hidden="true">
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="survey.html">Feedback</a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<main id="main">
+
+  <!-- Hero -->
+  <section id="home" class="hero" data-theme="gradient">
+    <canvas class="hero-canvas" id="hero-canvas"></canvas>
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-tag">Strategy &amp; Product Advisory</span>
+        <h1>Helping Businesses Strategise, Execute, and Succeed</h1>
+        <p>Athena partners with ambitious organisations to turn strategy into outcomes — combining decades of executive consulting experience with modern product and AI expertise.</p>
+        <div class="hero-ctas">
+          <a href="#services" class="btn btn-primary">Our Services</a>
+          <a href="#contact" class="btn btn-outline">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" data-theme="light">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <span class="section-tag">Who We Are</span>
+          <h2 class="section-title">About Athena</h2>
+          <p>Athena was founded by Trevor Gruzin, a former Accenture Senior Managing Director, and Elliot Gruzin, an AI Engineer — to bridge the gap between high-level strategy and hands-on execution.</p>
+          <p>We believe the best consulting outcomes come from pairing deep industry experience with modern, technology-driven approaches. Our team has delivered transformative work across financial services, technology, government, and startups.</p>
+          <p>Named after the Greek goddess of wisdom and strategic warfare, Athena embodies our philosophy: sharp thinking, decisive action, and outcomes that endure.</p>
+        </div>
+        <div class="approach-cards">
+          <div class="approach-card reveal delay-1">
+            <div class="approach-icon">&#9670;</div>
+            <h4>Strategic Clarity</h4>
+            <p>We cut through complexity to find the insight that matters — then build a plan to act on it.</p>
+          </div>
+          <div class="approach-card reveal delay-2">
+            <div class="approach-icon">&#9881;</div>
+            <h4>Execution Focus</h4>
+            <p>Strategy without execution is a wish. We embed alongside your teams to drive real delivery.</p>
+          </div>
+          <div class="approach-card reveal delay-3">
+            <div class="approach-icon">&#9733;</div>
+            <h4>Modern Methods</h4>
+            <p>From AI integration to product-led growth, we bring contemporary tools to classic strategic challenges.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section id="team" data-theme="cloud">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="section-tag">Leadership</span>
+        <h2 class="section-title">Our Team</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card reveal delay-1">
+          <div class="avatar">TG</div>
+          <h3>Trevor Gruzin</h3>
+          <p class="team-role">CEO &amp; Co-Founder</p>
+          <p class="team-bio">Former Accenture Senior Managing Director with 30+ years leading large-scale strategy and transformation programs across financial services, government, and technology sectors.</p>
+        </div>
+        <div class="team-card reveal delay-1">
+          <div class="avatar">EG</div>
+          <h3>Elliot Gruzin</h3>
+          <p class="team-role">AI Advisor &amp; Co-Founder</p>
+          <p class="team-bio">AI Engineer specialising in applied machine learning and product development. Brings a technology-first lens to strategy, helping clients harness AI for competitive advantage.</p>
+        </div>
+        <div class="team-card reveal delay-2">
+          <div class="avatar">OM</div>
+          <h3>Oliver Medcalf</h3>
+          <p class="team-role">Product Strategy</p>
+          <p class="team-bio">Experienced product strategist with deep expertise in digital product development, go-to-market planning, and scaling product teams for growth-stage companies.</p>
+        </div>
+        <div class="team-card reveal delay-2">
+          <div class="avatar">PC</div>
+          <h3>Paul Crawford</h3>
+          <p class="team-role">Director</p>
+          <p class="team-bio">Seasoned director with extensive experience in business advisory, operational improvement, and building high-performance consulting practices across multiple industries.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" data-theme="light">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="section-tag">What We Do</span>
+        <h2 class="section-title">Our Services</h2>
+      </div>
+      <div class="services-list">
+        <details class="service-item reveal delay-1">
+          <summary>Strategy Reviews</summary>
+          <div class="service-content">
+            <p>Rigorous assessment of your current strategic position, competitive landscape, and growth opportunities.</p>
+            <ul>
+              <li>Market and competitive analysis</li>
+              <li>Strategic positioning assessment</li>
+              <li>Growth opportunity identification</li>
+              <li>Risk and capability gap analysis</li>
+              <li>Board-ready strategy reports</li>
+            </ul>
+          </div>
+        </details>
+        <details class="service-item reveal delay-1">
+          <summary>Strategy Formulation</summary>
+          <div class="service-content">
+            <p>Collaborative development of clear, actionable strategies aligned with your organisation's ambitions and capabilities.</p>
+            <ul>
+              <li>Vision and mission alignment workshops</li>
+              <li>Strategic roadmap development</li>
+              <li>Business model innovation</li>
+              <li>OKR and KPI framework design</li>
+              <li>Investment case development</li>
+            </ul>
+          </div>
+        </details>
+        <details class="service-item reveal delay-2">
+          <summary>Strategy Execution</summary>
+          <div class="service-content">
+            <p>Hands-on support to translate strategy into delivery — embedding with your teams to drive outcomes.</p>
+            <ul>
+              <li>Program and portfolio management</li>
+              <li>Transformation office setup</li>
+              <li>Change management and adoption</li>
+              <li>Agile delivery and coaching</li>
+              <li>Performance tracking dashboards</li>
+            </ul>
+          </div>
+        </details>
+        <details class="service-item reveal delay-3">
+          <summary>Advisory &amp; Delivery</summary>
+          <div class="service-content">
+            <p>Ongoing advisory relationships and embedded delivery support for organisations navigating complex challenges.</p>
+            <ul>
+              <li>Executive advisory and coaching</li>
+              <li>AI and digital strategy</li>
+              <li>Product and technology advisory</li>
+              <li>Vendor evaluation and selection</li>
+              <li>Interim leadership placements</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Client Logos -->
+  <section id="clients" class="clients-section" data-theme="light">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="section-tag">Our Clients</span>
+        <h2 class="section-title">Trusted By</h2>
+      </div>
+    </div>
+    <div class="marquee-wrapper reveal">
+      <div class="marquee-track">
+        <span class="marquee-item">Accenture</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">RewardPay</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">Westpac</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">ENPNT</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">myLot</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">SM</span>
+        <span class="marquee-divider">&middot;</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="marquee-item">Accenture</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">RewardPay</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">Westpac</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">ENPNT</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">myLot</span>
+        <span class="marquee-divider">&middot;</span>
+        <span class="marquee-item">SM</span>
+        <span class="marquee-divider">&middot;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials" data-theme="dark">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="section-tag">What Clients Say</span>
+        <h2 class="section-title">Testimonials</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal delay-1">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>Athena brought a rare combination of strategic rigour and practical delivery expertise. Trevor and his team were instrumental in shaping our growth strategy and ensuring we had the roadmap to execute it.</blockquote>
+          <div class="testimonial-divider"></div>
+          <p class="testimonial-author">Mark Daws</p>
+          <p class="testimonial-title">CEO, RewardPay</p>
+        </div>
+        <div class="testimonial-card reveal delay-2">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>Trevor is one of the most effective strategy leaders I have worked with. His ability to navigate complexity and deliver actionable outcomes is exceptional — a trusted advisor at the highest level.</blockquote>
+          <div class="testimonial-divider"></div>
+          <p class="testimonial-author">Bhaskar Ghosh</p>
+          <p class="testimonial-title">Former Chief Strategy Officer, Accenture</p>
+        </div>
+        <div class="testimonial-card reveal delay-2">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>Working with Athena transformed how we approach product strategy. Their blend of senior advisory and hands-on AI expertise gave us a competitive edge we didn't know we were missing.</blockquote>
+          <div class="testimonial-divider"></div>
+          <p class="testimonial-author">Felicia Palanca</p>
+          <p class="testimonial-title">Co-Founder, ENPNT</p>
+        </div>
+        <div class="testimonial-card reveal delay-3">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>Athena doesn't just advise — they roll up their sleeves and deliver. The strategic clarity and execution discipline they brought to our engagement was genuinely transformative for the business.</blockquote>
+          <div class="testimonial-divider"></div>
+          <p class="testimonial-author">Dr Tony Golsby-Smith</p>
+          <p class="testimonial-title">Founder, myLot</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" data-theme="gradient">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-text reveal">
+          <span class="section-tag">Get Started</span>
+          <h2 class="section-title">Let&rsquo;s Talk</h2>
+          <p>Whether you're navigating a strategic inflection point, launching a new product, or looking for an experienced advisory partner — we'd love to hear from you.</p>
+          <p>Drop us a message and we'll be in touch within 24 hours.</p>
+          <p><a href="mailto:hello@athenastrategy.com">hello@athenastrategy.com</a></p>
+        </div>
+        <div class="reveal delay-1">
+          <form id="contact-form" novalidate>
+            <div class="form-group">
+              <input type="text" id="name" name="name" placeholder=" " required autocomplete="name">
+              <label for="name">Name *</label>
+              <p class="form-error">Please enter your name.</p>
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" name="email" placeholder=" " required autocomplete="email">
+              <label for="email">Email *</label>
+              <p class="form-error">Please enter a valid email address.</p>
+            </div>
+            <div class="form-group">
+              <input type="text" id="company" name="company" placeholder=" " autocomplete="organization">
+              <label for="company">Company</label>
+            </div>
+            <div class="form-group">
+              <textarea id="message" name="message" placeholder=" " required rows="5"></textarea>
+              <label for="message">Message *</label>
+              <p class="form-error">Please enter a message.</p>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
+          </form>
+          <div class="form-success" id="form-success">
+            <div class="success-icon">&#10003;</div>
+            <h3>Message Sent</h3>
+            <p>Thank you for reaching out. We'll get back to you within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Athena<span>.</span></div>
+        <p class="footer-tagline">Strategy &amp; Product Advisory</p>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="survey.html">Feedback</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Athena Advisory. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── 1. Scroll State: Nav background/shadow ──
+  const nav = document.querySelector('.nav');
+  function updateNavScroll() {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  }
+  window.addEventListener('scroll', updateNavScroll, { passive: true });
+  updateNavScroll();
+
+  // ── 2. Active Section Tracking ──
+  const sections = document.querySelectorAll('section[id]');
+  const navLinksDesktop = document.querySelectorAll('.nav-links-desktop a');
+
+  const sectionObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinksDesktop.forEach(function(link) {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+
+  sections.forEach(function(section) { sectionObserver.observe(section); });
+
+  // ── 3. Mobile Nav Toggle ──
+  const toggle = document.querySelector('.nav-toggle');
+  const overlay = document.querySelector('.mobile-overlay');
+  const mobileLinks = overlay.querySelectorAll('a');
+
+  function closeMobileNav() {
+    toggle.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    const isOpen = toggle.classList.contains('open');
+    if (isOpen) {
+      closeMobileNav();
+    } else {
+      toggle.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  mobileLinks.forEach(function(link) {
+    link.addEventListener('click', closeMobileNav);
+  });
+
+  // ── 4. Reveal on Scroll ──
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealElements.forEach(function(el) { revealObserver.observe(el); });
+
+  // ── 5. Accordion Animation ──
+  document.querySelectorAll('.service-item').forEach(function(details) {
+    var summary = details.querySelector('summary');
+    var content = details.querySelector('.service-content');
+
+    summary.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (details.open) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        content.style.transition = 'max-height 0.35s ease';
+        requestAnimationFrame(function() {
+          content.style.maxHeight = '0';
+          content.style.overflow = 'hidden';
+        });
+        content.addEventListener('transitionend', function handler() {
+          details.open = false;
+          content.style.maxHeight = '';
+          content.style.overflow = '';
+          content.style.transition = '';
+          content.removeEventListener('transitionend', handler);
+        });
+      } else {
+        details.open = true;
+        var height = content.scrollHeight;
+        content.style.maxHeight = '0';
+        content.style.overflow = 'hidden';
+        requestAnimationFrame(function() {
+          content.style.transition = 'max-height 0.35s ease';
+          content.style.maxHeight = height + 'px';
+        });
+        content.addEventListener('transitionend', function handler() {
+          content.style.maxHeight = '';
+          content.style.overflow = '';
+          content.style.transition = '';
+          content.removeEventListener('transitionend', handler);
+        });
+      }
+    });
+  });
+
+  // ── 6. Form Validation ──
+  var form = document.getElementById('contact-form');
+  var successEl = document.getElementById('form-success');
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var valid = true;
+
+    // Name
+    var nameGroup = form.querySelector('#name').closest('.form-group');
+    if (!form.name.value.trim()) {
+      nameGroup.classList.add('error');
+      valid = false;
+    } else {
+      nameGroup.classList.remove('error');
+    }
+
+    // Email
+    var emailGroup = form.querySelector('#email').closest('.form-group');
+    if (!validateEmail(form.email.value.trim())) {
+      emailGroup.classList.add('error');
+      valid = false;
+    } else {
+      emailGroup.classList.remove('error');
+    }
+
+    // Message
+    var msgGroup = form.querySelector('#message').closest('.form-group');
+    if (!form.message.value.trim()) {
+      msgGroup.classList.add('error');
+      valid = false;
+    } else {
+      msgGroup.classList.remove('error');
+    }
+
+    if (valid) {
+      form.style.display = 'none';
+      successEl.classList.add('show');
+    }
+  });
+
+  // Clear error on input
+  form.querySelectorAll('input, textarea').forEach(function(input) {
+    input.addEventListener('input', function() {
+      input.closest('.form-group').classList.remove('error');
+    });
+  });
+
+  // ── 7. Particle Constellation ──
+  (function() {
+    var canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var hero = canvas.parentElement;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999 };
+    var CONNECTION_DIST = 150;
+    var MOUSE_RADIUS = 200;
+    var PARTICLE_COUNT = 80;
+    var raf;
+
+    // Amber color components for reuse
+    var AMBER_R = 200, AMBER_G = 148, AMBER_B = 63;
+
+    function resize() {
+      var rect = hero.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Scale particle count for mobile
+      var target = rect.width < 600 ? 40 : PARTICLE_COUNT;
+      CONNECTION_DIST = rect.width < 600 ? 100 : 150;
+      while (particles.length < target) particles.push(createParticle(rect));
+      while (particles.length > target) particles.pop();
+    }
+
+    function createParticle(rect) {
+      var w = rect ? rect.width : canvas.clientWidth;
+      var h = rect ? rect.height : canvas.clientHeight;
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 1.5 + 0.8
+      };
+    }
+
+    function init() {
+      var rect = hero.getBoundingClientRect();
+      particles = [];
+      for (var i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(createParticle(rect));
+      }
+      resize();
+    }
+
+    function draw() {
+      var w = canvas.clientWidth;
+      var h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      // Update positions
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+
+        // Gentle mouse attraction
+        var dx = mouse.x - p.x;
+        var dy = mouse.y - p.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_RADIUS && dist > 1) {
+          var force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS * 0.015;
+          p.vx += dx / dist * force;
+          p.vy += dy / dist * force;
+        }
+
+        // Damping
+        p.vx *= 0.998;
+        p.vy *= 0.998;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around edges
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
+        if (p.y < -10) p.y = h + 10;
+        if (p.y > h + 10) p.y = -10;
+      }
+
+      // Draw connections
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var a = particles[i];
+          var b = particles[j];
+          var dx = a.x - b.x;
+          var dy = a.y - b.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DIST) {
+            var alpha = (1 - dist / CONNECTION_DIST) * 0.25;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = 'rgba(' + AMBER_R + ',' + AMBER_G + ',' + AMBER_B + ',' + alpha + ')';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw particles
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + AMBER_R + ',' + AMBER_G + ',' + AMBER_B + ',0.6)';
+        ctx.fill();
+      }
+
+      // Mouse glow
+      if (mouse.x > 0 && mouse.y > 0) {
+        var gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, MOUSE_RADIUS * 0.6);
+        gradient.addColorStop(0, 'rgba(' + AMBER_R + ',' + AMBER_G + ',' + AMBER_B + ',0.04)');
+        gradient.addColorStop(1, 'rgba(' + AMBER_R + ',' + AMBER_G + ',' + AMBER_B + ',0)');
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, MOUSE_RADIUS * 0.6, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    // Allow mouse interaction through the canvas
+    hero.addEventListener('mousemove', function(e) {
+      var rect = hero.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+    hero.addEventListener('mouseleave', function() {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    });
+
+    window.addEventListener('resize', resize);
+
+    // Respect reduced motion
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!prefersReduced.matches) {
+      init();
+      draw();
+    }
+    prefersReduced.addEventListener('change', function() {
+      if (prefersReduced.matches) {
+        cancelAnimationFrame(raf);
+        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+      } else {
+        init();
+        draw();
+      }
+    });
+  })();
+
+})();
+</script>
+</body>
+</html>
